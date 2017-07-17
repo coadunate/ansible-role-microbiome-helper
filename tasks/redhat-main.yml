@@ -1,0 +1,91 @@
+---
+
+- name: Download FastQC
+  unarchive:
+    src: http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v0.11.5.zip
+    dest: "{{ ansible_env.PWD }}/software/FastQC"
+    
+- name: Give correct permissions to FastQC executable
+  command: chmod 755 {{ ansible_env.PWD }}/software/FastQC/fastqc
+
+- name: Move FastQC binary to bin
+  copy: 
+    src: "{{ ansible_env.PWD }}/software/FastQC/fastqc"
+    dest: "{{ ansible_env.PWD }}/software/bin/fastqc"
+
+- name: Remove FastQC directory
+  file:
+    path: "{{ ansible_env.PWD }}/software/FastQC"
+    state: absent
+
+- name: Get GNU parallel
+  yum:
+    name: parallel
+  become: true
+  become_user: root
+
+- name: Download Bowtie2
+  unarchive:
+    src: https://downloads.sourceforge.net/project/bowtie-bio/bowtie2/2.3.2/bowtie2-2.3.2-linux-x86_64.zip
+    dest: "{{ ansible_env.PWD }}/software/bowtie2"
+
+- name: Move binaries to bin
+  copy: 
+    src: "{{ ansible_env.PWD }}/software/bowtie2/{{ item }}"
+  with_items:
+    - bowtie2
+    - bowtie2-align-l
+    - bowtie2-align-l-debug
+    - bowtie2-align-s
+    - bowtie2-align-s-debug
+    - bowtie2-build
+    - bowtie2-build-l
+    - bowtie2-build-l-debug
+    - bowtie2-build-s
+    - bowtie2-build-s-debug
+    - bowtie2-inspect
+    - bowtie2-inspect-l
+    - bowtie2-inspect-l-debug
+    - bowtie2-inspect-s
+    - bowtie2-inspect-s-debug
+
+- name: Remove Bowtie2 directory
+  file:
+    path: "{{ ansible_env.PWD }}/software/bowtie2"
+    state: absent
+
+- name: Ensure libgtextutils exists
+  unarchive:
+    src: https://github.com/agordon/libgtextutils/releases/download/0.7/libgtextutils-0.7.tar.gz
+    dest: "{{ ansible_env.PWD }}/software/libgtextutils"
+
+- name: Configure libgtextutils
+  command: "{{ ansible_env.PWD }}/software/libgtextutils/configure"
+
+- name: Execute Makefile
+  command: make -C {{ ansible_env.PWD }}/software/libgtextutils
+
+- name: Install libgtextutils
+  command: make install -C {{ ansible_env.PWD }}/software/libgtextutils
+  become: true
+  become_user: root
+
+- name: Remove libgtextutils directory
+  file:
+    path: "{{ ansible_env.PWD }}/software/libgtextutils"
+    state: absent
+
+- name: Clone FastX toolkit git repo
+  unarchive:
+    src: https://github.com/agordon/fastx_toolkit/releases/download/0.0.14/fastx_toolkit-0.0.14.tar.bz2
+    dest: "{{ ansible_env.PWD }}/software/fastx_toolkit" 
+
+- name: Configure FastX toolkit
+  command: echo export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH >> {{ ansible_env.PWD }}/.bashrc
+  command: "{{ ansible_env.PWD }}/software/fastx_toolkit/configure"
+  command: make -C {{ ansible_env.PWD }}/software/fastx_toolkit
+
+- name: Install FastX toolkit
+  command: make install -C {{ ansible_env.PWD }}/software/fastx_toolkit
+  become: true
+  become_user: root

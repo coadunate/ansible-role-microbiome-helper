@@ -1,0 +1,10 @@
+---
+
+- name: Install Dependencies in apt repo
+  apt:
+    name: "{{ item }}"
+  with_items:
+    - fastqc
+    - parallel
+    - bowtie2
+    - fastx-toolkit

@@ -1,0 +1,106 @@
+---
+# tasks file for ansible-role-microbiome-helper
+
+- name: "Ensure software folder exists"
+  file: path={{ ansible_env.PWD }}/software/bin state=directory mode=0777
+
+- name: Ensure database folder exists
+  file: path={{ ansible_env.PWD }}/software/databases state=directory mode=0777
+
+- name: Ensure bin is in PATH
+  shell: echo export PATH={{ ansible_env.PWD }}/software/bin:$PATH >> {{ ansible_env.PWD }}/.bashrc
+
+- name: Clone Microbiome Helper Git repo
+  git: 
+    repo: 'https://github.com/LangilleLab/microbiome_helper.git'
+    dest: "{{ ansible_env.PWD }}/software/microbiome_helper"
+
+- include: redhat-main.yml
+  when: ansible_os_family == 'Redhat'
+
+- include: debian-main.yml
+  when: ansible_os_family == 'Debian'
+
+- include: databases.yml 
+
+- name: Download and unarchive the diamond package
+  unarchive:
+    src: http://github.com/bbuchfink/diamond/releases/download/v0.9.9/diamond-linux64.tar.gz
+    dest: "{{ ansible_env.PWD }}/software/bin/"
+    remote_src: true
+
+- name: Clone PEAR Git repo
+  git:
+    repo: 'https://github.com/frederic-mahe/PEAR.git'
+    dest: "{{ ansible_env.PWD }}/software/PEAR"
+
+- name: Execute PEAR Makefile
+  command: make -C {{ ansible_env.PWD }}/software/PEAR
+
+- name: Move PEAR executable to bin
+  copy:
+    src: "{{ ansible_env.PWD }}/software/PEAR/src/pear"
+    dest: "{{ ansible_env.PWD }}/software/bin/pear"
+    remote_src: True
+
+- name: Create Directory for database
+  file: path={{ ansible_env.PWD }}/software/databases/HumanDB state=directory mode=0777
+
+- name: Download Human Pre-Indexed Database
+  unarchive:
+    src: ftp://ftp.ccb.jhu.edu/pub/data/bowtie2_indexes/hg19.zip
+    dest: "{{ ansible_env.PWD }}/software/databases/HumanDB"
+    remote_src: True
+    
+#- name: Build Database (Empty)
+
+- name: Install Humann2
+  pip:
+    name: humann2
+  become: true
+  become_user: root
+
+- name: Ensure bin/bbmap exists
+  file: path={{ ansible_env.PWD }}/software/bin/bbmap state=directory mode=0777
+
+- name: Get BBMap
+  unarchive:
+    src: https://downloads.sourceforge.net/project/bbmap/BBMap_37.36.tar.gz
+    dest: "{{ ansible_env.PWD }}/software/bin/bbmap"
+    remote_src: True
+
+- name: Add BBMap to .bashrc
+  shell: echo export PATH={{ ansible_env.PWD }}/software/bin/bbmap:$PATH >> {{ ansible_env.PWD }}/.bashrc
+
+- name: Download VSearch
+  unarchive: 
+    src: https://github.com/torognes/vsearch/archive/v2.4.3.tar.gz
+    dest: "{{ ansible_env.PWD }}/software/"
+    remote_src: True
+
+- name: Configure VSearch
+  command: sh autogen.sh
+  args:
+    chdir: "{{ ansible_env.PWD }}/software/vsearch-2.4.3"
+
+- name: Configure VSearch
+  command: ./configure
+  args: 
+    chdir: "{{ ansible_env.PWD }}/software/vsearch-2.4.3"
+  become: true
+  become_user: root
+
+- name: Execute VSearch Makefile
+  command: make -C {{ ansible_env.PWD }}/software/vsearch-2.4.3
+
+- name: Move VSearch binaries
+  copy: 
+    src: "{{ ansible_env.PWD }}/software/vsearch-2.4.3/bin/vsearch"
+    dest: "{{ ansible_env.PWD }}/software/bin/vsearch"
+    remote_src: True
+
+- name: Install STAMP
+  pip:
+    name: STAMP
+  become: true
+  become_user: root

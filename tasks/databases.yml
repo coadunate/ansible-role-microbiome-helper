@@ -1,0 +1,49 @@
+---
+
+- name: Add databases to .bashrc
+  shell: echo export PATH={{ ansible_env.PWD }}/software/databases:$PATH >> {{ ansible_env.PWD }}/.bashrc
+
+- name: 16S Chimera Checking
+  get_url:
+    url: https://www.dropbox.com/s/qnlsv7ve2lg6qfp/RDP_trainset16_022016.fa
+    dest: "{{ ansible_env.PWD }}/software/databases/RDP_trainset16_022016.fa"
+
+- name: 18S Chimera Checking
+  get_url:
+    url: https://www.dropbox.com/s/p4wnjyvatdobq5h/Eukaryota_SILVA_123_SSURef_Nr99_tax_silva_U-replaced.fasta
+    dest: "{{ ansible_env.PWD }}/software/databases/Eukaryota_SILVA_123_SSURef_Nr99_tax_silva_U-replaced.fasta"
+
+- name: ITS2 Chimera Checking
+  get_url:
+    url: https://www.dropbox.com/s/nraevyc2fjyd7bv/UNITE_uchime_ITS2only_01.01.2016.fasta
+    dest: "{{ ansible_env.PWD }}/software/databases/UNITE_uchime_ITS2only_01.01.2016.fasta"
+
+- name: Eukaryotic OTU Picking
+  get_url:
+    url: https://www.dropbox.com/s/bvot58v47rfc6a2/gb203_pr2_all_10_28_99p_tax_Xs-fixed_poly-fixed.txt
+    dest: "{{ ansible_env.PWD }}/software/databases/gb203_pr2_all_10_28_99p_tax_Xs-fixed_poly-fixed.txt"
+
+- name: Eukaryotic OTU Picking
+  get_url:
+    url: https://www.dropbox.com/s/m1i6cdyj2hwgs2e/gb203_pr2_all_10_28_99p_clean.fasta
+    dest: "{{ ansible_env.PWD }}/software/databases/gb203_pr2_all_10_28_99p_clean.fasta"
+
+- name: Eukaryotic OTU Picking
+  get_url:
+    url: https://www.dropbox.com/s/z104yn84rgsltip/90_Silva_111_rep_set_euk_aligned.filter.fasta
+    dest: "{{ ansible_env.PWD }}/software/databases/90_Silva_111_rep_set_euk_aligned.filter.fasta"
+
+- name: ITS2 OTU Picking
+  get_url: 
+    url: https://www.dropbox.com/s/pqa6kbxa8ojb75b/UNITE_sh_refs_qiime_ver7_dynamic_20.11.2016.fasta
+    dest: "{{ ansible_env.PWD }}/software/databases/UNITE_sh_refs_qiime_ver7_dynamic_20.11.2016.fasta"
+ 
+- name: ITS2 OTU Picking
+  get_url:
+    url: https://www.dropbox.com/s/9ya2smevrf0zdhz/UNITE_sh_refs_qiime_ver7_dynamic_20.11.2016.goodASCII.txt
+    dest: "{{ ansible_env.PWD }}/software/databases/UNITE_sh_refs_qiime_ver7_dynamic_20.11.2016.goodASCII.txt"
+
+- name: KEGG Orthologs
+  get_url:
+    url: https://www.dropbox.com/s/hzduqabilbrqr36/kegg.reduced.dmnd
+    dest: "{{ ansible_env.PWD }}/software/databases/kegg.reduced.dmnd"
