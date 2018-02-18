@@ -29,20 +29,6 @@
     dest: "{{ ansible_env.PWD }}/software/bin/"
     remote_src: true
 
-- name: Clone PEAR Git repo
-  git:
-    repo: 'https://github.com/frederic-mahe/PEAR.git'
-    dest: "{{ ansible_env.PWD }}/software/PEAR"
-
-- name: Execute PEAR Makefile
-  command: make -C {{ ansible_env.PWD }}/software/PEAR
-
-- name: Move PEAR executable to bin
-  copy:
-    src: "{{ ansible_env.PWD }}/software/PEAR/src/pear"
-    dest: "{{ ansible_env.PWD }}/software/bin/pear"
-    remote_src: True
-
 - name: Create Directory for database
   file: path={{ ansible_env.PWD }}/software/databases/HumanDB state=directory mode=0777
 

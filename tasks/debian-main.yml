@@ -8,3 +8,7 @@
     - parallel
     - bowtie2
     - fastx-toolkit
+    - cpanminus
+
+- name: Get the Fork Manager Perl module
+  command: cpanm Parallel::ForkManager
