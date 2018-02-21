@@ -7,8 +7,8 @@
 - name: Ensure database folder exists
   file: path={{ ansible_env.PWD }}/software/databases state=directory mode=0777
 
-- name: Ensure bin is in PATH
-  shell: echo export PATH={{ ansible_env.PWD }}/software/bin:$PATH >> {{ ansible_env.PWD }}/.bashrc
+#- name: Ensure bin is in PATH
+#  shell: echo export PATH={{ ansible_env.PWD }}/software/bin:$PATH >> {{ ansible_env.PWD }}/.bashrc
 
 - name: Clone Microbiome Helper Git repo
   git: 
@@ -55,8 +55,8 @@
     dest: "{{ ansible_env.PWD }}/software/bin/bbmap"
     remote_src: True
 
-- name: Add BBMap to .bashrc
-  shell: echo export PATH={{ ansible_env.PWD }}/software/bin/bbmap:$PATH >> {{ ansible_env.PWD }}/.bashrc
+#- name: Add BBMap to .bashrc
+#  shell: echo export PATH={{ ansible_env.PWD }}/software/bin/bbmap:$PATH >> {{ ansible_env.PWD }}/.bashrc
 
 - name: Download VSearch
   unarchive: 
@@ -90,3 +90,6 @@
     name: STAMP
   become: true
   become_user: root
+
+- name: Set PATH
+  shell: echo export PATH={{ ansible_env.PWD }}/software/bin:{{ ansible_env.PWD }}/software/bin/bbmap:{{ ansible_env.PWD }}/software/metaphlan2/:{{ ansible_env.PWD }}/software/cdbfasta:$PATH >> {{ ansible_env.PWD }}/.bashrc  
